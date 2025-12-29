@@ -179,160 +179,208 @@
                     width:100%;
                 }
             }
+
+            html, body {
+                height: 100%;
+                margin: 0;
+            }
+
+            .main-wrapper {
+                min-height: calc(100vh - 120px);
+            }
+
+            body {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .footer {
+                margin-top:40px;
+                padding:25px;
+                text-align:center;
+                background:var(--card);
+                border-top:1px solid var(--border);
+                color:var(--text);
+                border-radius:16px 16px 0 0;
+                margin-top: auto;
+            }
+
+            .footer ul {
+                list-style:none;
+                margin:10px 0;
+                padding:0;
+                line-height:1.8;
+            }
+
+            .footer .copy {
+                margin-top:10px;
+                font-size:13px;
+                opacity:0.7;
+            }
         </style>
     </head>
 
-    <body>
+    <div class="main-wrapper">
+        <body>
+            <header>
+                <div class="settings">
+                    <button class="settings-btn" onclick="toggleSettings()">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 8.5A3.5 3.5 0 1 0 12 15.5 3.5 3.5 0 0 0 12 8.5Z"/>
+                        </svg>
+                    </button>
 
-    <header>
-        <div class="settings">
-            <button class="settings-btn" onclick="toggleSettings()">
-                <svg viewBox="0 0 24 24">
-                    <path d="M12 8.5A3.5 3.5 0 1 0 12 15.5 3.5 3.5 0 0 0 12 8.5Z"/>
-                </svg>
-            </button>
+                    <div class="settings-menu" id="settingsMenu">
+                        <button onclick="setTheme('light')">الوضع الفاتح</button>
+                        <button onclick="setTheme('dark')">الوضع الداكن</button>
+                    </div>
+                </div>
 
-            <div class="settings-menu" id="settingsMenu">
-                <button onclick="setTheme('light')">الوضع الفاتح</button>
-                <button onclick="setTheme('dark')">الوضع الداكن</button>
+                <h1>مقارنة السيارات</h1>
+                <p>قارن بين السيارات من حيث جميع المواصفات</p>
+            </header>
+
+            <div class="container">
+
+                <div class="inputs">
+                    <input id="car1" placeholder="اكتب اسم السيارة">
+                    <select onchange="car1.value=this.value">
+                        <option value="">اختر سيارة</option>
+                        <option>كامري 2010</option>
+                        <option>سوناتا 2011</option>
+                        <option>كورولا 2012</option>
+                    </select>
+
+                    <input id="car2" placeholder="اكتب اسم السيارة">
+                    <select onchange="car2.value=this.value">
+                        <option value="">اختر سيارة</option>
+                        <option>كامري 2010</option>
+                        <option>سوناتا 2011</option>
+                        <option>كورولا 2012</option>
+                    </select>
+                </div>
+
+                <button class="compare-btn" onclick="compare()">قارن السيارات</button>
+
+                <div class="result" id="output"></div>
+
             </div>
-        </div>
 
-        <h1>مقارنة السيارات</h1>
-        <p>قارن بين السيارات من حيث جميع المواصفات</p>
-    </header>
+            <script>
+                const cars = {
+                    "كامري 2010": {
+                        price:"25,000 - 35,000 ريال",
+                        engine:"V6 3.0 لتر",
+                        power:"190 حصان",
+                        fuel:"بنزين",
+                        safety:"وسائد هوائية + ABS + ESP",
+                        usage:"عائلية وسفر",
+                        passengers:"5 ركاب",
+                        space:"واسعة، مساحة خلفية ممتازة",
+                        comfort:"مقاعد مريحة، نظام تعليق ناعم",
+                        transmission:"أوتوماتيك",
+                        colors:"أبيض، أسود، فضي، أزرق",
+                        consumption:"حوالي 12 كم/لتر"
+                    },
 
-    <div class="container">
+                    "سوناتا 2011": {
+                        price:"22,000 - 32,000 ريال",
+                        engine:"2.4 لتر 4 سلندر",
+                        power:"175 حصان",
+                        fuel:"بنزين",
+                        safety:"ABS + ثبات + وسائد هوائية",
+                        usage:"قيادة يومية",
+                        passengers:"5 ركاب",
+                        space:"متوسطة، خلفية جيدة",
+                        comfort:"راحة جيدة، مكيف قوي، بلوتوث",
+                        transmission:"أوتوماتيك",
+                        colors:"فضي، أسود، أحمر، أزرق",
+                        consumption:"حوالي 13 كم/لتر"
+                    },
 
-        <div class="inputs">
-            <input id="car1" placeholder="اكتب اسم السيارة">
-            <select onchange="car1.value=this.value">
-                <option value="">اختر سيارة</option>
-                <option>كامري 2010</option>
-                <option>سوناتا 2011</option>
-                <option>كورولا 2012</option>
-            </select>
+                    "كورولا 2012": {
+                        price:"23,000 - 33,000 ريال",
+                        engine:"1.8 لتر 4 سلندر",
+                        power:"132 حصان",
+                        fuel:"بنزين",
+                        safety:"وسائد هوائية + ABS",
+                        usage:"اقتصادية، قيادة يومية",
+                        passengers:"5 ركاب",
+                        space:"متوسطة",
+                        comfort:"مقاعد عملية، مكيف، بلوتوث",
+                        transmission:"أوتوماتيك",
+                        colors:"أبيض، فضي، أسود",
+                        consumption:"حوالي 14 كم/لتر"
+                    }
+                };
 
-            <input id="car2" placeholder="اكتب اسم السيارة">
-            <select onchange="car2.value=this.value">
-                <option value="">اختر سيارة</option>
-                <option>كامري 2010</option>
-                <option>سوناتا 2011</option>
-                <option>كورولا 2012</option>
-            </select>
-        </div>
+                function showCar(name, c, best) {
+                    return `
+                        <div class="car-box ${best ? 'best' : ''}">
+                            <h3>${name}</h3>
+                            <ul>
+                                <li><b>السعر:</b> ${c.price}</li>
+                                <li><b>المحرك:</b> ${c.engine}</li>
+                                <li><b>القوة:</b> ${c.power}</li>
+                                <li><b>الوقود:</b> ${c.fuel}</li>
+                                <li><b>الأمان:</b> ${c.safety}</li>
+                                <li><b>الاستخدام:</b> ${c.usage}</li>
+                                <li><b>عدد الركاب:</b> ${c.passengers}</li>
+                                <li><b>المساحة:</b> ${c.space}</li>
+                                <li><b>الراحة:</b> ${c.comfort}</li>
+                                <li><b>ناقل الحركة:</b> ${c.transmission}</li>
+                                <li><b>الألوان المتاحة:</b> ${c.colors}</li>
+                                <li><b>استهلاك الوقود:</b> ${c.consumption}</li>
+                            </ul>
+                        </div>
+                    `;
+                }
 
-        <button class="compare-btn" onclick="compare()">قارن السيارات</button>
+                function compare() {
+                    const c1Name = car1.value.trim();
+                    const c2Name = car2.value.trim();
 
-        <div class="result" id="output"></div>
+                    if (!cars[c1Name] || !cars[c2Name]) {
+                        output.innerHTML = "الرجاء اختيار سيارتين صحيحتين";
+                        return;
+                    }
 
+                    const best = (parseInt(cars[c1Name].power) > parseInt(cars[c2Name].power)) ? c1Name : c2Name;
+
+                    output.innerHTML =
+                        showCar(c1Name, cars[c1Name], best === c1Name) +
+                        showCar(c2Name, cars[c2Name], best === c2Name);
+                }
+
+                function toggleSettings() {
+                    settingsMenu.style.display =
+                        settingsMenu.style.display === "block" ? "none" : "block";
+                }
+
+                function setTheme(t) {
+                    if (t === "dark") {
+                        document.body.classList.add("dark");
+                        localStorage.setItem("theme", "dark");
+                    } else {
+                        document.body.classList.remove("dark");
+                        localStorage.setItem("theme", "light");
+                    }
+                }
+
+                if (localStorage.getItem("theme") === "dark") {
+                    document.body.classList.add("dark");
+                }
+            </script>
+
+        </body>
     </div>
 
-    <script>
-        const cars = {
-            "كامري 2010": {
-                price:"25,000 - 35,000 ريال",
-                engine:"V6 3.0 لتر",
-                power:"190 حصان",
-                fuel:"بنزين",
-                safety:"وسائد هوائية + ABS + ESP",
-                usage:"عائلية وسفر",
-                passengers:"5 ركاب",
-                space:"واسعة، مساحة خلفية ممتازة",
-                comfort:"مقاعد مريحة، نظام تعليق ناعم",
-                transmission:"أوتوماتيك",
-                colors:"أبيض، أسود، فضي، أزرق",
-                consumption:"حوالي 12 كم/لتر"
-            },
-
-            "سوناتا 2011": {
-                price:"22,000 - 32,000 ريال",
-                engine:"2.4 لتر 4 سلندر",
-                power:"175 حصان",
-                fuel:"بنزين",
-                safety:"ABS + ثبات + وسائد هوائية",
-                usage:"قيادة يومية",
-                passengers:"5 ركاب",
-                space:"متوسطة، خلفية جيدة",
-                comfort:"راحة جيدة، مكيف قوي، بلوتوث",
-                transmission:"أوتوماتيك",
-                colors:"فضي، أسود، أحمر، أزرق",
-                consumption:"حوالي 13 كم/لتر"
-            },
-
-            "كورولا 2012": {
-                price:"23,000 - 33,000 ريال",
-                engine:"1.8 لتر 4 سلندر",
-                power:"132 حصان",
-                fuel:"بنزين",
-                safety:"وسائد هوائية + ABS",
-                usage:"اقتصادية، قيادة يومية",
-                passengers:"5 ركاب",
-                space:"متوسطة",
-                comfort:"مقاعد عملية، مكيف، بلوتوث",
-                transmission:"أوتوماتيك",
-                colors:"أبيض، فضي، أسود",
-                consumption:"حوالي 14 كم/لتر"
-            }
-        };
-
-        function showCar(name, c, best) {
-            return `
-                <div class="car-box ${best ? 'best' : ''}">
-                    <h3>${name}</h3>
-                    <ul>
-                        <li><b>السعر:</b> ${c.price}</li>
-                        <li><b>المحرك:</b> ${c.engine}</li>
-                        <li><b>القوة:</b> ${c.power}</li>
-                        <li><b>الوقود:</b> ${c.fuel}</li>
-                        <li><b>الأمان:</b> ${c.safety}</li>
-                        <li><b>الاستخدام:</b> ${c.usage}</li>
-                        <li><b>عدد الركاب:</b> ${c.passengers}</li>
-                        <li><b>المساحة:</b> ${c.space}</li>
-                        <li><b>الراحة:</b> ${c.comfort}</li>
-                        <li><b>ناقل الحركة:</b> ${c.transmission}</li>
-                        <li><b>الألوان المتاحة:</b> ${c.colors}</li>
-                        <li><b>استهلاك الوقود:</b> ${c.consumption}</li>
-                    </ul>
-                </div>
-            `;
-        }
-
-        function compare() {
-            const c1Name = car1.value.trim();
-            const c2Name = car2.value.trim();
-
-            if (!cars[c1Name] || !cars[c2Name]) {
-                output.innerHTML = "الرجاء اختيار سيارتين صحيحتين";
-                return;
-            }
-
-            const best = (parseInt(cars[c1Name].power) > parseInt(cars[c2Name].power)) ? c1Name : c2Name;
-
-            output.innerHTML =
-                showCar(c1Name, cars[c1Name], best === c1Name) +
-                showCar(c2Name, cars[c2Name], best === c2Name);
-        }
-
-        function toggleSettings() {
-            settingsMenu.style.display =
-                settingsMenu.style.display === "block" ? "none" : "block";
-        }
-
-        function setTheme(t) {
-            if (t === "dark") {
-                document.body.classList.add("dark");
-                localStorage.setItem("theme", "dark");
-            } else {
-                document.body.classList.remove("dark");
-                localStorage.setItem("theme", "light");
-            }
-        }
-
-        if (localStorage.getItem("theme") === "dark") {
-            document.body.classList.add("dark");
-        }
-    </script>
-
-    </body>
+    <footer class="footer">
+        <p>تم تطوير المشروع بواسطة فريق العمل</p>
+        <ul>
+            <li>1/1 عبدالرزاق محمود العلي</li>
+            <li></li>
+        </ul>
+        <p class="copy">© 2025 جميع الحقوق محفوظة</p>
+    </footer>
 </html>
