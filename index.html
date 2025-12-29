@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+
+<html lang="ar">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>مقارنة السيارات</title>
+
+        <style>
+            :root {
+                --primary:#3b82f6;
+                --bg:#f5f9ff;
+                --card:#ffffff;
+                --text:#0f172a;
+                --border:#dbeafe;
+                --best:#22c55e;
+            }
+
+            body.dark {
+                --primary:#60a5fa;
+                --bg:#020617;
+                --card:#0f172a;
+                --text:#e5e7eb;
+                --border:#1e293b;
+            }
+
+            * {
+                box-sizing:border-box;
+                margin:0;
+                padding:0;
+            }
+
+            body {
+                font-family:Tahoma,Arial;
+                direction:rtl;
+                background:var(--bg);
+                color:var(--text);
+                transition:.3s;
+            }
+
+            header {
+                background:var(--primary);
+                color:#fff;
+                padding:20px;
+                text-align:center;
+                position:relative;
+            }
+
+            .settings {
+                position:absolute;
+                top:15px;
+                right:15px;
+            }
+
+            .settings-btn {
+                width:45px;
+                height:45px;
+                border-radius:50%;
+                border:none;
+                background:rgba(255,255,255,.25);
+                cursor:pointer;
+            }
+
+            .settings-btn svg {
+                width:24px;
+                height:24px;
+                fill:#fff;
+            }
+
+            .settings-menu {
+                display:none;
+                position:absolute;
+                top:55px;
+                right:0;
+                background:var(--card);
+                border:1px solid var(--border);
+                border-radius:12px;
+                padding:10px;
+                width:180px;
+            }
+
+            .settings-menu button {
+                width:100%;
+                padding:12px;
+                font-size:14px;
+                border:none;
+                border-radius:8px;
+                background:var(--primary);
+                color:#fff;
+                cursor:pointer;
+                margin-top:5px;
+            }
+
+            .container {
+                max-width:1200px;
+                margin:auto;
+                padding:15px;
+            }
+
+            .inputs {
+                display:flex;
+                gap:10px;
+                flex-wrap:wrap;
+                justify-content:center;
+                margin-bottom:20px;
+            }
+
+            input, select {
+                padding:12px;
+                flex:1 1 200px;
+                min-width:180px;
+                border-radius:10px;
+                border:1px solid var(--border);
+                background:var(--card);
+                color:var(--text);
+                font-size:14px;
+            }
+
+            .compare-btn {
+                display:block;
+                margin:20px auto;
+                padding:15px 45px;
+                border-radius:40px;
+                font-size:16px;
+                background:var(--primary);
+                color:#fff;
+                border:none;
+                cursor:pointer;
+                transition:.3s;
+            }
+
+            .compare-btn:hover {
+                background:#1d4ed8;
+            }
+
+            .result {
+                display:grid;
+                grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+                gap:20px;
+                margin-top:30px;
+            }
+
+            .car-box {
+                background:var(--card);
+                border-radius:16px;
+                border:1px solid var(--border);
+                padding:15px;
+                animation:fadeUp .5s ease;
+            }
+
+            .car-box.best {
+                border:2px solid var(--best);
+            }
+
+            .car-box h3 {
+                margin-bottom:10px;
+                color:var(--primary);
+                font-size:16px;
+            }
+
+            .car-box ul {
+                list-style:none;
+                line-height:1.8;
+            }
+
+            @keyframes fadeUp {
+                from { opacity:0; transform:translateY(20px); }
+                to   { opacity:1; transform:none; }
+            }
+
+            @media (max-width:600px) {
+                .compare-btn {
+                    width:90%;
+                    font-size:15px;
+                    padding:12px 25px;
+                }
+
+                input, select {
+                    width:100%;
+                }
+            }
+        </style>
+    </head>
+
+    <body>
+
+    <header>
+        <div class="settings">
+            <button class="settings-btn" onclick="toggleSettings()">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 8.5A3.5 3.5 0 1 0 12 15.5 3.5 3.5 0 0 0 12 8.5Z"/>
+                </svg>
+            </button>
+
+            <div class="settings-menu" id="settingsMenu">
+                <button onclick="setTheme('light')">الوضع الفاتح</button>
+                <button onclick="setTheme('dark')">الوضع الداكن</button>
+            </div>
+        </div>
+
+        <h1>مقارنة السيارات</h1>
+        <p>قارن بين السيارات من حيث جميع المواصفات</p>
+    </header>
+
+    <div class="container">
+
+        <div class="inputs">
+            <input id="car1" placeholder="اكتب اسم السيارة">
+            <select onchange="car1.value=this.value">
+                <option value="">اختر سيارة</option>
+                <option>كامري 2010</option>
+                <option>سوناتا 2011</option>
+                <option>كورولا 2012</option>
+            </select>
+
+            <input id="car2" placeholder="اكتب اسم السيارة">
+            <select onchange="car2.value=this.value">
+                <option value="">اختر سيارة</option>
+                <option>كامري 2010</option>
+                <option>سوناتا 2011</option>
+                <option>كورولا 2012</option>
+            </select>
+        </div>
+
+        <button class="compare-btn" onclick="compare()">قارن السيارات</button>
+
+        <div class="result" id="output"></div>
+
+    </div>
+
+    <script>
+        const cars = {
+            "كامري 2010": {
+                price:"25,000 - 35,000 ريال",
+                engine:"V6 3.0 لتر",
+                power:"190 حصان",
+                fuel:"بنزين",
+                safety:"وسائد هوائية + ABS + ESP",
+                usage:"عائلية وسفر",
+                passengers:"5 ركاب",
+                space:"واسعة، مساحة خلفية ممتازة",
+                comfort:"مقاعد مريحة، نظام تعليق ناعم",
+                transmission:"أوتوماتيك",
+                colors:"أبيض، أسود، فضي، أزرق",
+                consumption:"حوالي 12 كم/لتر"
+            },
+
+            "سوناتا 2011": {
+                price:"22,000 - 32,000 ريال",
+                engine:"2.4 لتر 4 سلندر",
+                power:"175 حصان",
+                fuel:"بنزين",
+                safety:"ABS + ثبات + وسائد هوائية",
+                usage:"قيادة يومية",
+                passengers:"5 ركاب",
+                space:"متوسطة، خلفية جيدة",
+                comfort:"راحة جيدة، مكيف قوي، بلوتوث",
+                transmission:"أوتوماتيك",
+                colors:"فضي، أسود، أحمر، أزرق",
+                consumption:"حوالي 13 كم/لتر"
+            },
+
+            "كورولا 2012": {
+                price:"23,000 - 33,000 ريال",
+                engine:"1.8 لتر 4 سلندر",
+                power:"132 حصان",
+                fuel:"بنزين",
+                safety:"وسائد هوائية + ABS",
+                usage:"اقتصادية، قيادة يومية",
+                passengers:"5 ركاب",
+                space:"متوسطة",
+                comfort:"مقاعد عملية، مكيف، بلوتوث",
+                transmission:"أوتوماتيك",
+                colors:"أبيض، فضي، أسود",
+                consumption:"حوالي 14 كم/لتر"
+            }
+        };
+
+        function showCar(name, c, best) {
+            return `
+                <div class="car-box ${best ? 'best' : ''}">
+                    <h3>${name}</h3>
+                    <ul>
+                        <li><b>السعر:</b> ${c.price}</li>
+                        <li><b>المحرك:</b> ${c.engine}</li>
+                        <li><b>القوة:</b> ${c.power}</li>
+                        <li><b>الوقود:</b> ${c.fuel}</li>
+                        <li><b>الأمان:</b> ${c.safety}</li>
+                        <li><b>الاستخدام:</b> ${c.usage}</li>
+                        <li><b>عدد الركاب:</b> ${c.passengers}</li>
+                        <li><b>المساحة:</b> ${c.space}</li>
+                        <li><b>الراحة:</b> ${c.comfort}</li>
+                        <li><b>ناقل الحركة:</b> ${c.transmission}</li>
+                        <li><b>الألوان المتاحة:</b> ${c.colors}</li>
+                        <li><b>استهلاك الوقود:</b> ${c.consumption}</li>
+                    </ul>
+                </div>
+            `;
+        }
+
+        function compare() {
+            const c1Name = car1.value.trim();
+            const c2Name = car2.value.trim();
+
+            if (!cars[c1Name] || !cars[c2Name]) {
+                output.innerHTML = "الرجاء اختيار سيارتين صحيحتين";
+                return;
+            }
+
+            const best = (parseInt(cars[c1Name].power) > parseInt(cars[c2Name].power)) ? c1Name : c2Name;
+
+            output.innerHTML =
+                showCar(c1Name, cars[c1Name], best === c1Name) +
+                showCar(c2Name, cars[c2Name], best === c2Name);
+        }
+
+        function toggleSettings() {
+            settingsMenu.style.display =
+                settingsMenu.style.display === "block" ? "none" : "block";
+        }
+
+        function setTheme(t) {
+            if (t === "dark") {
+                document.body.classList.add("dark");
+                localStorage.setItem("theme", "dark");
+            } else {
+                document.body.classList.remove("dark");
+                localStorage.setItem("theme", "light");
+            }
+        }
+
+        if (localStorage.getItem("theme") === "dark") {
+            document.body.classList.add("dark");
+        }
+    </script>
+
+    </body>
+</html>
